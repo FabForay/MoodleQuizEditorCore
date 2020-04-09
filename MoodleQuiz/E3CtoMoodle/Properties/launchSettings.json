@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "E3CtoMoodle": {
+      "commandName": "Project",
+      "commandLineArgs": "-p fichier.txt"
+    }
+  }
+}

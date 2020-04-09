@@ -1,0 +1,43 @@
+Thème A : types de base
+Question A.1
+En hexadécimal (base 16), quelle est la valeur de la différence CBD - BAC ?
+Réponses
+A	AB
+B	TB
+C	FF
+D	111
+
+Question A.2
+Deux entiers positifs ont pour écriture en base 16 :  A7 et 84.
+Quelle est l'écriture en base 16 de leur somme ?
+Réponses
+A	1811
+B	12B
+C	13A
+D	A784
+
+ 
+Thème B : types construits
+Question B.1
+On veut affecter à t la valeur [[0,1,2], [3,4,5], [6,7,8], [9,10,11], [12,13,14]].
+Pour cela on utilise le code suivant. Par quoi doit-on remplacer les pointillés …… ?
+n = 5
+p = 3
+t = [ [ …… for j in range(p) ]  for i in range(n) ]
+Réponses
+A	i*j + j
+B	p*i + j
+C	p*j + i
+D	i*(j+1)
+
+Question B.2
+On considère le script suivant :
+t = [2, 8, 9, 2]
+t[2] = t[2] + 5
+Quelle est la valeur de t à la fin de son exécution ?
+Réponses
+A	[2, 13, 9, 2]
+B	[2, 8, 14, 2]
+C	[7, 13, 14, 7]
+D	[7, 13, 9, 2]
+
