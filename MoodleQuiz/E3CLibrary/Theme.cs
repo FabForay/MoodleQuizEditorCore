@@ -6,7 +6,7 @@ namespace E3CLibrary
 {
     public class Theme
     {
-        
+
         public string Titre;
         public string Categorie;
 
@@ -21,22 +21,40 @@ namespace E3CLibrary
 
         public Theme(string ligne) : this()
         {
+            ligne = ligne.TrimStart();
             // Thème A : types de base
             if (ligne.StartsWith(E3CTest.StartTheme))
             {
                 ligne = ligne.Substring(E3CTest.StartTheme.Length);
-                ligne = ligne.TrimStart();
+                //
                 string[] info = ligne.Split(new char[] { ':' });
-                if ( info.Length >= 2)
+                if (info.Length >= 2)
                 {
                     Categorie = info[0].Trim();
                     Titre = info[1].Trim();
                 }
                 else
                     Titre = info[0].Trim();
-            } 
+            }
             else
                 this.Titre = ligne;
+        }
+
+        public string Texte
+        {
+            get
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(E3CTest.StartTheme);
+                sb.Append(" : ");
+                sb.Append(this.Titre);
+                sb.Append(E3CTest.NewLine);
+                foreach( Question q in Questions )
+                {
+                    sb.Append(q.Texte);
+                }
+                return sb.ToString();
+            }
         }
     }
 }

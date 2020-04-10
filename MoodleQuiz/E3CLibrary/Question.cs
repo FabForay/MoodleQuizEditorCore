@@ -6,7 +6,6 @@ namespace E3CLibrary
 {
     public class Question
     {
-        public string NewLine;
 
         public string Titre;
 
@@ -16,19 +15,39 @@ namespace E3CLibrary
 
         public Correction Correction;
 
+        public String Texte
+        {
+            get
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append(E3CTest.StartQuestion);
+                sb.Append(" ");
+                sb.Append(this.Titre);
+                sb.Append(E3CTest.NewLine);
+                sb.Append(this.TexteQuestion);
+                sb.Append(E3CTest.StartReponses);
+                sb.Append(E3CTest.NewLine);
+                foreach (Reponse rep in Reponses)
+                {
+                    sb.Append(rep.Texte);
+                }
+                sb.Append(this.Correction.Texte);
+                sb.Append(E3CTest.NewLine);
+                return sb.ToString();
+            }
+
+        }
+
         public String TexteQuestion
         {
             get
             {
                 StringBuilder sb = new StringBuilder();
-                if (Lignes.Count > 0)
+                foreach (string ligne in Lignes)
                 {
-                    for (int i = 0; i < Lignes.Count - 1; i++)
-                    {
-                        sb.Append(Lignes[i]);
-                        sb.Append(NewLine);
-                    }
-                    sb.Append(Lignes[Lignes.Count - 1]);
+                    string temp = ligne.Replace("\t", E3CTest.SpacesForTab);
+                    sb.Append(temp);
+                    sb.Append(E3CTest.NewLine);
                 }
                 return sb.ToString();
             }
@@ -37,7 +56,6 @@ namespace E3CLibrary
 
         public Question()
         {
-            NewLine = Environment.NewLine;
             Titre = "";
             Lignes = new List<string>();
             Reponses = new List<Reponse>();
@@ -46,6 +64,7 @@ namespace E3CLibrary
 
         public Question(string ligne) : this()
         {
+            ligne = ligne.TrimStart();
             // Question A.2
             if (ligne.StartsWith(E3CTest.StartQuestion))
             {

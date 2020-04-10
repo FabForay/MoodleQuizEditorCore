@@ -2,7 +2,7 @@
   "profiles": {
     "E3CtoMoodle": {
       "commandName": "Project",
-      "commandLineArgs": "-p fichier.txt"
+      "commandLineArgs": "-p E3CFile.docx"
     }
   }
 }

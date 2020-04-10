@@ -48,7 +48,9 @@ namespace E3CtoMoodle
 
         private static void Preparation(string v, string destFile)
         {
-            throw new NotImplementedException();
+            E3CTest test = new E3CTest();
+            test.Load(v);
+            //
         }
 
         private static void Convertion(string v, string destFile)

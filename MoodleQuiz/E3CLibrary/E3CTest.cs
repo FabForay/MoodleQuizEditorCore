@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DocumentFormat.OpenXml.Packaging;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -30,6 +31,10 @@ namespace E3CLibrary
         public static readonly string StartReponses = "Réponses";
         public static readonly string StartCorrection = "Correction";
 
+        public static string NewLine = Environment.NewLine;
+
+        public static string SpacesForTab = "    ";
+
         public List<Theme> Themes;
 
         private Theme lastTheme;
@@ -40,12 +45,13 @@ namespace E3CLibrary
             lastTheme = null;
         }
 
-        public void Load( String filePath )
+        public void Load(String filePath)
         {
             TextReader reader;
-            if (Path.GetExtension(filePath).ToLower() == ".docx ")
+            if (Path.GetExtension(filePath).ToLower() == ".docx")
             {
                 String allText = DocxToText(filePath);
+                File.WriteAllText(filePath + ".bkp", allText);
                 reader = new StringReader(allText);
             }
             else
@@ -54,6 +60,14 @@ namespace E3CLibrary
             }
             //
             this.Load(reader);
+            //
+            StringBuilder sb = new StringBuilder();
+            foreach( Theme th in Themes )
+            {
+                sb.Append(th.Texte);
+                sb.Append(Environment.NewLine);
+            }
+            File.WriteAllText(filePath + ".txt", sb.ToString());
             //
             reader.Close();
         }
@@ -71,22 +85,23 @@ namespace E3CLibrary
             while (textStream.Peek() > 0)
             {
                 string ligne = textStream.ReadLine();
+                string toCheck = ligne.Trim();
                 //
                 switch (currentState)
                 {
                     case State.None:
-                        if (ligne.StartsWith(E3CTest.StartTheme))
+                        if (toCheck.StartsWith(E3CTest.StartTheme))
                         {
                             currentTheme = new Theme(ligne);
                             currentState = State.Theme;
                         }
                         break;
                     case State.Theme:
-                        if (ligne.StartsWith(E3CTest.StartTheme))
+                        if (toCheck.StartsWith(E3CTest.StartTheme))
                         {
                             currentTheme = new Theme(ligne);
                         }
-                        else if (ligne.StartsWith(E3CTest.StartQuestion))
+                        else if (toCheck.StartsWith(E3CTest.StartQuestion))
                         {
                             //
                             currentQuestion = new Question(ligne);
@@ -96,24 +111,24 @@ namespace E3CLibrary
                         }
                         break;
                     case State.Question:
-                        if (ligne.StartsWith(E3CTest.StartReponses))
+                        if (toCheck.StartsWith(E3CTest.StartReponses))
                         {
                             // ligne est ignorée
                             currentState = State.Reponse;
                         }
                         else
                         {
-                            currentQuestion.Lignes.Add( ligne );
+                            currentQuestion.Lignes.Add(ligne);
                         }
                         break;
                     case State.Reponse:
-                        if (ligne.StartsWith(E3CTest.StartTheme))
+                        if (toCheck.StartsWith(E3CTest.StartTheme))
                         {
                             currentTheme = new Theme(ligne);
                             currentState = State.Theme;
                             break;
                         }
-                        else if (ligne.StartsWith(E3CTest.StartQuestion))
+                        else if (toCheck.StartsWith(E3CTest.StartQuestion))
                         {
                             currentQuestion = new Question(ligne);
                             currentTheme.Questions.Add(currentQuestion);
@@ -121,7 +136,7 @@ namespace E3CLibrary
                             currentState = State.Question;
                             break;
                         }
-                        else if (ligne.StartsWith(E3CTest.StartCorrection))
+                        else if (toCheck.StartsWith(E3CTest.StartCorrection))
                         {
                             currentCorrection = new Correction(ligne);
                             currentState = State.Theme;
@@ -164,22 +179,56 @@ namespace E3CLibrary
             }
         }
 
-        private string DocxToText(string docxFile)
+        public static string DocxToText(string docxFile)
         {
-            XmlNamespaceManager NsMgr = new XmlNamespaceManager(new NameTable());
-            NsMgr.AddNamespace("w", "http://schemas.openxmlformats.org/wordprocessingml/2006/main");
-
-            using (var archive = ZipFile.OpenRead(docxFile))
+            StringBuilder stringBuilder;
+            using (WordprocessingDocument wordprocessingDocument = WordprocessingDocument.Open(docxFile, false))
             {
-                return XDocument
-                    .Load(archive.GetEntry(@"word/document.xml").Open())
-                    .XPathSelectElements("//w:p", NsMgr)
-                    .Aggregate(new StringBuilder(), (sb, p) => p
-                        .XPathSelectElements(".//w:t|.//w:tab|.//w:cr|.//w:br", NsMgr)
-                        .Select(e => { switch (e.Name.LocalName) { case "cr": case "br": return Environment.NewLine; case "tab": return "\t"; } return e.Value; })
-                        .Aggregate(sb, (sb1, v) => sb1.Append(v)))
-                    .ToString();
+                NameTable nameTable = new NameTable();
+                XmlNamespaceManager xmlNamespaceManager = new XmlNamespaceManager(nameTable);
+                xmlNamespaceManager.AddNamespace("w", "http://schemas.openxmlformats.org/wordprocessingml/2006/main");
+
+                string wordprocessingDocumentText;
+                using (StreamReader streamReader = new StreamReader(wordprocessingDocument.MainDocumentPart.GetStream()))
+                {
+                    wordprocessingDocumentText = streamReader.ReadToEnd();
+                }
+
+                stringBuilder = new StringBuilder(wordprocessingDocumentText.Length);
+
+                XmlDocument xmlDocument = new XmlDocument(nameTable);
+                xmlDocument.LoadXml(wordprocessingDocumentText);
+
+                XmlNodeList paragraphNodes = xmlDocument.SelectNodes("//w:p", xmlNamespaceManager);
+                foreach (XmlNode paragraphNode in paragraphNodes)
+                {
+                    XmlNodeList textNodes = paragraphNode.SelectNodes(".//w:t | .//w:tab | .//w:br", xmlNamespaceManager);
+                    foreach (XmlNode textNode in textNodes)
+                    {
+                        switch (textNode.Name)
+                        {
+                            case "w:t":
+                                stringBuilder.Append(textNode.InnerText);
+                                break;
+
+                            case "w:tab":
+                                stringBuilder.Append("\t");
+                                break;
+
+                            case "w:br":
+                                stringBuilder.Append(Environment.NewLine);
+                                break;
+                        }
+                    }
+
+                    stringBuilder.Append(Environment.NewLine);
+                }
             }
+
+            return stringBuilder.ToString();
         }
+
+
+
     }
 }

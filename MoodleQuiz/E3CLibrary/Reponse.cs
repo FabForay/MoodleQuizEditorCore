@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace E3CLibrary
 {
@@ -13,6 +14,32 @@ namespace E3CLibrary
         {
             Choix = "";
             Lignes = new List<string>();
+        }
+
+        public String Texte
+        {
+            get
+            {
+                StringBuilder sb = new StringBuilder();
+                sb.Append( this.Choix);
+                sb.Append(" ");
+                bool first = true;
+                foreach (string ligne in Lignes)
+                {
+                    string temp = ligne.Replace("\t", E3CTest.SpacesForTab);
+                    if ( first )
+                    {
+                        if ( !String.IsNullOrWhiteSpace(temp))
+                        {
+                            sb.Append(" ");
+                        }
+                    }
+                    sb.Append(temp);
+                    sb.Append(E3CTest.NewLine);
+                }
+                return sb.ToString();
+            }
+
         }
 
         public Reponse(string ligne) : this()
