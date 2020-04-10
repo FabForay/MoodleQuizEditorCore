@@ -51,7 +51,7 @@ namespace E3CLibrary
             if (Path.GetExtension(filePath).ToLower() == ".docx")
             {
                 String allText = DocxToText(filePath);
-                File.WriteAllText(filePath + ".bkp", allText);
+                File.WriteAllText(filePath + ".bkp", allText, Encoding.UTF8);
                 reader = new StringReader(allText);
             }
             else
@@ -62,12 +62,12 @@ namespace E3CLibrary
             this.Load(reader);
             //
             StringBuilder sb = new StringBuilder();
-            foreach( Theme th in Themes )
+            foreach (Theme th in Themes)
             {
                 sb.Append(th.Texte);
                 sb.Append(Environment.NewLine);
             }
-            File.WriteAllText(filePath + ".txt", sb.ToString());
+            File.WriteAllText(filePath + ".txt", sb.ToString(), Encoding.UTF8);
             //
             reader.Close();
         }
@@ -182,11 +182,13 @@ namespace E3CLibrary
         public static string DocxToText(string docxFile)
         {
             StringBuilder stringBuilder;
+            StringBuilder sbTemp = new StringBuilder();
             using (WordprocessingDocument wordprocessingDocument = WordprocessingDocument.Open(docxFile, false))
             {
                 NameTable nameTable = new NameTable();
                 XmlNamespaceManager xmlNamespaceManager = new XmlNamespaceManager(nameTable);
                 xmlNamespaceManager.AddNamespace("w", "http://schemas.openxmlformats.org/wordprocessingml/2006/main");
+                xmlNamespaceManager.AddNamespace("m", "http://schemas.openxmlformats.org/officeDocument/2006/math");
 
                 string wordprocessingDocumentText;
                 using (StreamReader streamReader = new StreamReader(wordprocessingDocument.MainDocumentPart.GetStream()))
@@ -202,7 +204,7 @@ namespace E3CLibrary
                 XmlNodeList paragraphNodes = xmlDocument.SelectNodes("//w:p", xmlNamespaceManager);
                 foreach (XmlNode paragraphNode in paragraphNodes)
                 {
-                    XmlNodeList textNodes = paragraphNode.SelectNodes(".//w:t | .//w:tab | .//w:br", xmlNamespaceManager);
+                    XmlNodeList textNodes = paragraphNode.SelectNodes(".//w:t | .//w:tab | .//w:br | .//m:oMath | .//m:sup", xmlNamespaceManager);
                     foreach (XmlNode textNode in textNodes)
                     {
                         switch (textNode.Name)
@@ -217,6 +219,31 @@ namespace E3CLibrary
 
                             case "w:br":
                                 stringBuilder.Append(Environment.NewLine);
+                                break;
+                            case "m:oMath":
+                                //stringBuilder.Append(textNode.InnerText);
+                                XmlNodeList mathTextNodes = textNode.SelectNodes(".//m:t | .//m:sup", xmlNamespaceManager);
+                                foreach (XmlNode mathTextNode in mathTextNodes)
+                                {
+                                    switch (mathTextNode.Name)
+                                    {
+                                        case "m:t":
+                                            string inner = mathTextNode.InnerText;
+                                            char point = (char)8943;
+                                            if (inner.Contains( point ))
+                                            {
+                                                sbTemp.Append(point);
+                                                string pointPoint = sbTemp.ToString();
+                                                sbTemp.Clear();
+                                                inner = inner.Replace(pointPoint, "...");
+                                            }
+                                            stringBuilder.Append(inner);
+                                            break;
+                                        case "m:sup":
+                                            stringBuilder.Append("^");
+                                            break;
+                                    }
+                                }
                                 break;
                         }
                     }
