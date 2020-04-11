@@ -71,7 +71,18 @@ namespace MoodleQuiz
         public string Name { get => Title; set => Title = value; }
 
 
-        public string QuestionText { get => questionText; set => questionText = value; }
+        public string QuestionText
+        {
+            get
+            {
+                return questionText;
+            }
+
+            set
+            {
+                questionText = value;
+            }
+        }
         public string GeneralFeedback { get => generalFeedback; set => generalFeedback = value; }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using DocumentFormat.OpenXml.Packaging;
+using MoodleQuiz;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -50,7 +51,7 @@ namespace E3CLibrary
             TextReader reader;
             if (Path.GetExtension(filePath).ToLower() == ".docx")
             {
-                String allText = DocxToText(filePath);
+                String allText = E3CTest.DocxToText(filePath);
                 // File.WriteAllText(filePath + ".bkp", allText, Encoding.UTF8);
                 reader = new StringReader(allText);
             }
@@ -69,13 +70,12 @@ namespace E3CLibrary
             StringBuilder sb = new StringBuilder();
             foreach (Theme th in Themes)
             {
-                sb.Append(th.Texte);
-                sb.Append(Environment.NewLine);
+                sb.Append(th.TexteE3C);
+                sb.Append(E3CTest.NewLine);
             }
             File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
             //
         }
-
 
         public void Load(TextReader textStream)
         {
@@ -143,6 +143,7 @@ namespace E3CLibrary
                         else if (toCheck.StartsWith(E3CTest.StartCorrection))
                         {
                             currentCorrection = new Correction(ligne);
+                            currentQuestion.Correction = currentCorrection;
                             currentState = State.Theme;
                             break;
                         }
@@ -172,6 +173,48 @@ namespace E3CLibrary
                 }
 
             }
+        }
+
+        public void SaveAsMoodle(string filePath)
+        {
+            Quiz mQuiz = new Quiz();
+            //
+            string push = E3CTest.NewLine;
+            E3CTest.NewLine = "<br/>";
+            //
+            foreach (Theme th in Themes)
+            {
+                Category cat = new Category(th.Titre);
+                //
+                foreach( Question q in th.Questions )
+                {
+                    MultiChoiceQuestion mQuestion = new MultiChoiceQuestion();
+                    mQuestion.Title = q.Titre;
+                    mQuestion.QuestionText = q.TexteQuestion;
+                    //
+                    String repJuste = q.Correction.Choix;
+                    repJuste = repJuste.Trim();
+                    if (!String.IsNullOrWhiteSpace(repJuste) )
+                    {
+                        // Ok, on a une Correction (une Réponse Juste)
+                        foreach( Reponse rep in q.Reponses )
+                        {
+                            Answer ans = new Answer();
+                            ans.Text = rep.Texte;
+                            if( String.Compare( repJuste, rep.Choix, true ) == 0 )
+                            {
+                                ans.Fraction = 100;
+                            }
+                            mQuestion.AddAnswer(ans);
+                        }
+                        mQuiz.AddQuestion(cat, mQuestion);
+                    }
+                }
+            }
+            //
+            mQuiz.Save(filePath);
+            //
+            E3CTest.NewLine = push;
         }
 
         private void AddTheme(Theme currentTheme)
@@ -258,8 +301,6 @@ namespace E3CLibrary
 
             return stringBuilder.ToString();
         }
-
-
 
     }
 }

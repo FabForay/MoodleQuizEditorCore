@@ -11,7 +11,7 @@ namespace E3CLibrary
             this.Choix = "";
         }
 
-        public string Texte
+        public string TexteE3C
         {
             get
             {

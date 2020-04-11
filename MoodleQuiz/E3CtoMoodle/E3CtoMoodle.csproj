@@ -7,7 +7,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\E3CLibrary\E3CLibrary.csproj" />
-    <ProjectReference Include="..\MoodleQuiz\MoodleQuiz.csproj" />
   </ItemGroup>
 
 </Project>

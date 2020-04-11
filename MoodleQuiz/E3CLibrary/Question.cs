@@ -15,7 +15,10 @@ namespace E3CLibrary
 
         public Correction Correction;
 
-        public String Texte
+        /// <summary>
+        /// Le texte de la Question au Format E3C
+        /// </summary>
+        public String TexteE3C
         {
             get
             {
@@ -29,15 +32,18 @@ namespace E3CLibrary
                 sb.Append(E3CTest.NewLine);
                 foreach (Reponse rep in Reponses)
                 {
-                    sb.Append(rep.Texte);
+                    sb.Append(rep.TexteE3C);
                 }
-                sb.Append(this.Correction.Texte);
+                sb.Append(this.Correction.TexteE3C);
                 sb.Append(E3CTest.NewLine);
                 return sb.ToString();
             }
 
         }
 
+        /// <summary>
+        /// Le Texte de la Question, tel que posé dans le Test
+        /// </summary>
         public String TexteQuestion
         {
             get
@@ -46,6 +52,8 @@ namespace E3CLibrary
                 foreach (string ligne in Lignes)
                 {
                     string temp = ligne.Replace("\t", E3CTest.SpacesForTab);
+                    temp = temp.Replace("<", "&lt;");
+                    temp = temp.Replace(">", "&gt;");
                     sb.Append(temp);
                     sb.Append(E3CTest.NewLine);
                 }

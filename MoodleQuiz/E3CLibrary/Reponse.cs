@@ -16,7 +16,10 @@ namespace E3CLibrary
             Lignes = new List<string>();
         }
 
-        public String Texte
+        /// <summary>
+        /// Le texte de la réponse au format E3C
+        /// </summary>
+        public String TexteE3C
         {
             get
             {
@@ -42,6 +45,24 @@ namespace E3CLibrary
 
         }
 
+        public String Texte
+        {
+            get
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (string ligne in Lignes)
+                {
+                    string temp = ligne.Replace("\t", E3CTest.SpacesForTab);
+                    temp = temp.Replace("<", "&lt;");
+                    temp = temp.Replace(">", "&gt;");
+                    sb.Append(temp);
+                    sb.Append(E3CTest.NewLine);
+                }
+                return sb.ToString();
+            }
+
+        }
+
         public Reponse(string ligne) : this()
         {
             //
@@ -50,7 +71,9 @@ namespace E3CLibrary
                 // Rien dans le premier caractère ?
                 if (!String.IsNullOrWhiteSpace(ligne.Substring(0, 1)))
                 {
+                    // On récupère le nom de la proposition
                     Choix = ligne.Substring(0, 1);
+                    // et son texte
                     ligne = ligne.Substring(1);
                     Lignes.Add(ligne);
                 }

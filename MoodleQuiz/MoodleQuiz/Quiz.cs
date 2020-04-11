@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -192,6 +193,25 @@ namespace MoodleQuiz
             XmlElement root = doc.DocumentElement;
             //
             this.MoodleXML = (XmlNode)root;
+        }
+
+        public void Save(string xmlFile)
+        {
+            StreamWriter sw = new StreamWriter(xmlFile, false, Encoding.UTF8);
+            this.Save(sw);
+            sw.Close();
+        }
+
+        public void Save(TextWriter xmlFile)
+        {
+            XmlDocument newXmlDoc = new XmlDocument();
+            XmlDeclaration declaration = newXmlDoc.CreateXmlDeclaration("1.0", "utf-8", null);
+            newXmlDoc.AppendChild(declaration);
+
+            XmlNode itemNode = newXmlDoc.ImportNode(this.MoodleXML, true);
+            newXmlDoc.AppendChild(itemNode);
+
+            newXmlDoc.Save(xmlFile);
         }
 
 

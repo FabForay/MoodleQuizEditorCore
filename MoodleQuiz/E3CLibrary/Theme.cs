@@ -40,7 +40,7 @@ namespace E3CLibrary
                 this.Titre = ligne;
         }
 
-        public string Texte
+        public string TexteE3C
         {
             get
             {
@@ -51,7 +51,7 @@ namespace E3CLibrary
                 sb.Append(E3CTest.NewLine);
                 foreach( Question q in Questions )
                 {
-                    sb.Append(q.Texte);
+                    sb.Append(q.TexteE3C);
                 }
                 return sb.ToString();
             }
