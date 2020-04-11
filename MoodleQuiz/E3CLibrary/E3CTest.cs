@@ -51,7 +51,7 @@ namespace E3CLibrary
             if (Path.GetExtension(filePath).ToLower() == ".docx")
             {
                 String allText = DocxToText(filePath);
-                File.WriteAllText(filePath + ".bkp", allText, Encoding.UTF8);
+                // File.WriteAllText(filePath + ".bkp", allText, Encoding.UTF8);
                 reader = new StringReader(allText);
             }
             else
@@ -61,15 +61,19 @@ namespace E3CLibrary
             //
             this.Load(reader);
             //
+            reader.Close();
+        }
+
+        public void Save(String filePath)
+        {
             StringBuilder sb = new StringBuilder();
             foreach (Theme th in Themes)
             {
                 sb.Append(th.Texte);
                 sb.Append(Environment.NewLine);
             }
-            File.WriteAllText(filePath + ".txt", sb.ToString(), Encoding.UTF8);
+            File.WriteAllText(filePath, sb.ToString(), Encoding.UTF8);
             //
-            reader.Close();
         }
 
 
