@@ -1,17 +1,23 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.30002.166
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35312.102
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoodleQuiz", "MoodleQuiz\MoodleQuiz.csproj", "{29EDA546-5BFA-40FA-8D02-53B83FD37917}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoodleQuiz", "MoodleQuiz\MoodleQuiz.csproj", "{29EDA546-5BFA-40FA-8D02-53B83FD37917}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoodleQuizTests", "MoodleQuizTests\MoodleQuizTests.csproj", "{8755ECF3-5709-49FF-B48D-A7DFCCEC5ADB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MoodleQuizTests", "MoodleQuizTests\MoodleQuizTests.csproj", "{8755ECF3-5709-49FF-B48D-A7DFCCEC5ADB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E3CtoMoodle", "E3CtoMoodle\E3CtoMoodle.csproj", "{A82751BB-0CD9-412D-AD23-665CB17E91C5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E3CtoMoodle", "E3CtoMoodle\E3CtoMoodle.csproj", "{A82751BB-0CD9-412D-AD23-665CB17E91C5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E3CLibrary", "E3CLibrary\E3CLibrary.csproj", "{786EF1F2-345C-475A-B0F8-0B560129EF78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E3CLibrary", "E3CLibrary\E3CLibrary.csproj", "{786EF1F2-345C-475A-B0F8-0B560129EF78}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "E3CLibraryTests", "E3CLibraryTests\E3CLibraryTests.csproj", "{0257FDC1-BCA1-4D4D-8B50-8DA78ECC415B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "E3CLibraryTests", "E3CLibraryTests\E3CLibraryTests.csproj", "{0257FDC1-BCA1-4D4D-8B50-8DA78ECC415B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{B73D94B7-619F-4B6F-AE02-30A19015A5DC}"
+	ProjectSection(SolutionItems) = preProject
+		..\LICENSE.md = ..\LICENSE.md
+		..\README.md = ..\README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
